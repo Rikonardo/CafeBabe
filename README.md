@@ -94,7 +94,7 @@ fun main(args: Array<String>) {
 ```
 
 ## Editing classes
-CafeBabe allows you not only read classes, but also edit them. For example, you can rename class members, or class itself; copy methods from other classes; change class members visibility; etc.
+CafeBabe allows you not only read classes, but also edit them. For example, you can rename class members, or class itself; copy methods from other classes; change class members' visibility; etc.
 
 Here is an example of renaming class and copying method from another class to it:
 
@@ -105,8 +105,8 @@ fun main(args: Array<String>) {
     classFile.name = "com/example/MyClass" // Rename class
     
     val donorClass = ClassFile(File("./path/to/donor.class").readBytes()) // Read donor class
-    val sourceMethodName = "donorMethod" // Name of donor method
-    val targetMethodName = "targetMethod" // New name of donor method inside our class
+    val sourceMethodName = "donorMethod" // Name of method we are copying
+    val targetMethodName = "targetMethod" // New name of copied method inside our class
 
     val nameIndex = classInfo.constantPool.add(ConstantUtf8(targetMethodName)) // Add new name to constant pool
     val method = classInfo.methods.find { it.name == sourceMethodName }
@@ -126,7 +126,7 @@ fun main(args: Array<String>) {
 }
 ```
 
-Changing class or class member name will automatically change value in the constant pool on related index. This can lead to unexpected behavior when single Utf8 constant used in multiple places, so it's recommended to create separate constant poll entry when renaming huge classes:
+Changing class or class member name will automatically change value in the constant pool on related index. This can lead to unexpected behavior when single Utf8 constant used in multiple places, so it's recommended to create separate constant pool entry when renaming:
 
 ```kotlin
 fun main(args: Array<String>) {
@@ -193,6 +193,6 @@ fun main(args: Array<String>) {
     val m = classFile.methods[0]
     val a = m.attributes[0]
     println(a.name) // Prints attribute name (e.g. "Code")
-    println(a.info) // Prints attribute body
+    println(a.info.joinToString("") { "%02x".format(it) }) // Prints attribute body as hex string
 }
 ```

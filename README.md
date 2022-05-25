@@ -126,6 +126,8 @@ fun main(args: Array<String>) {
 }
 ```
 
+❗ Note that copied method won't work as expected because it's bytecode references to the constant pool entries in source class.
+
 Changing class or class member name will automatically change value in the constant pool on related index. This can lead to unexpected behavior when single Utf8 constant used in multiple places, so it's recommended to create separate constant pool entry when renaming:
 
 ```kotlin

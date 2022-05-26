@@ -34,6 +34,7 @@ data class ConstantPool(
         Utf8(1),
         MethodHandle(15),
         MethodType(16),
+        Dynamic(17),
         InvokeDynamic(18),
         Module(19),
         Package(20),
@@ -42,9 +43,13 @@ data class ConstantPool(
     companion object {
         fun from(reader: Reader, count: Int): ConstantPool {
             val constantPool = ConstantPool()
+            var skip = 0
             for (i in 1 until count) {
-                val tag = reader.readU1()
-                when (tag) {
+                if (skip > 0) {
+                    skip--
+                    continue
+                }
+                when (val tag = reader.readU1()) {
                     ConstantType.Class.tag -> {
                         val nameIndex = reader.readU2()
                         constantPool.add(ConstantClass(nameIndex))
@@ -79,10 +84,14 @@ data class ConstantPool(
                     ConstantType.Long.tag -> {
                         val bytes = reader.readB8()
                         constantPool.add(ConstantLong(BinaryLong.from(bytes)))
+                        constantPool.add(ConstantPadding(constantPool.size))
+                        skip++
                     }
                     ConstantType.Double.tag -> {
                         val bytes = reader.readB8()
                         constantPool.add(ConstantDouble(BinaryDouble.from(bytes)))
+                        constantPool.add(ConstantPadding(constantPool.size))
+                        skip++
                     }
                     ConstantType.NameAndType.tag -> {
                         val nameIndex = reader.readU2()
@@ -103,6 +112,11 @@ data class ConstantPool(
                         val descriptorIndex = reader.readU2()
                         constantPool.add(ConstantMethodType(descriptorIndex))
                     }
+                    ConstantType.Dynamic.tag -> {
+                        val bootstrapMethodAttrIndex = reader.readU2()
+                        val nameAndTypeIndex = reader.readU2()
+                        constantPool.add(ConstantDynamic(bootstrapMethodAttrIndex, nameAndTypeIndex))
+                    }
                     ConstantType.InvokeDynamic.tag -> {
                         val bootstrapMethodAttrIndex = reader.readU2()
                         val nameAndTypeIndex = reader.readU2()
@@ -116,7 +130,9 @@ data class ConstantPool(
                         val nameIndex = reader.readU2()
                         constantPool.add(ConstantPackage(nameIndex))
                     }
-                    else -> throw IllegalArgumentException("Unknown constant type: $tag")
+                    else -> {
+                        throw IllegalArgumentException("Unknown constant type: $tag")
+                    }
                 }
             }
             return constantPool
@@ -184,6 +200,11 @@ data class ConstantPool(
                         writer.writeU1(entry.tag)
                         writer.writeU2(entry.descriptorIndex)
                     }
+                    is ConstantDynamic -> {
+                        writer.writeU1(entry.tag)
+                        writer.writeU2(entry.bootstrapMethodAttrIndex)
+                        writer.writeU2(entry.nameAndTypeIndex)
+                    }
                     is ConstantInvokeDynamic -> {
                         writer.writeU1(entry.tag)
                         writer.writeU2(entry.bootstrapMethodAttrIndex)
@@ -197,7 +218,6 @@ data class ConstantPool(
                         writer.writeU1(entry.tag)
                         writer.writeU2(entry.nameIndex)
                     }
-                    else -> throw IllegalArgumentException("Unknown constant type: ${entry.tag}")
                 }
             }
         }

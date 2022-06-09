@@ -4,8 +4,8 @@
 
 <div align="center">
     <img alt="Open issues" src="https://img.shields.io/github/issues-raw/Rikonardo/CafeBabe"/>
-    <img alt="Open issues" src="https://img.shields.io/maven-metadata/v?metadataUrl=https%3A%2F%2Fmaven.rikonardo.com%2Freleases%2Fcom%2Frikonardo%2Fcafebabe%2FCafeBabe%2Fmaven-metadata.xml"/>
-    <img alt="Open issues" src="https://img.shields.io/github/languages/code-size/Rikonardo/CafeBabe"/>
+    <img alt="Version" src="https://img.shields.io/maven-metadata/v?metadataUrl=https%3A%2F%2Fmaven.rikonardo.com%2Freleases%2Fcom%2Frikonardo%2Fcafebabe%2FCafeBabe%2Fmaven-metadata.xml"/>
+    <img alt="Code size" src="https://img.shields.io/github/languages/code-size/Rikonardo/CafeBabe"/>
 </div>
 
 <br>

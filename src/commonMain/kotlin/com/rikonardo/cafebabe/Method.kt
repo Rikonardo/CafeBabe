@@ -5,6 +5,22 @@ import com.rikonardo.cafebabe.data.constantpool.ConstantUtf8
 import com.rikonardo.cafebabe.utils.ObservableList
 
 class Method(private val classFile: ClassFile, val data: MethodData) {
+    constructor(
+        classFile: ClassFile,
+        name: String,
+        descriptor: String = "()V",
+        accessFlags: List<AccessFlag> = listOf(),
+        attributes: List<Attribute> = listOf()
+    ) : this(
+        classFile,
+        MethodData(
+            AccessFlag.to(accessFlags),
+            classFile.constantPool.add(ConstantUtf8(name)),
+            classFile.constantPool.add(ConstantUtf8(descriptor)),
+            attributes.map { it.data }
+        )
+    )
+
     var name: String
         get() = (classFile.data.constantPool[data.nameIndex] as ConstantUtf8).value
         set(value) {

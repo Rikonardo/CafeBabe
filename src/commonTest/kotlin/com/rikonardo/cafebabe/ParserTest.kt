@@ -53,4 +53,18 @@ class ParserTest {
 
         assertTrue(newClassInfo.methods.any { it.name == "myBrandNewMethod" })
     }
+
+    @Test
+    fun generateFromScratchTest() {
+        val classInfo = ClassFile("HelloWorld")
+        classInfo.access.add(AccessFlag.PUBLIC)
+        classInfo.interfaces.add(Interface(classInfo, "java/lang/Runnable"))
+        classInfo.methods.add(Method(classInfo, "sayHello", "()V"))
+        val newBinary = classInfo.compile()
+        val newClassInfo = ClassFile(newBinary)
+        assertEquals(newClassInfo.name, "HelloWorld")
+        assertEquals(newClassInfo.interfaces.first().name, "java/lang/Runnable")
+        assertEquals(newClassInfo.methods.first().name, "sayHello")
+        assertEquals(newClassInfo.methods.first().descriptor, "()V")
+    }
 }

@@ -5,6 +5,11 @@ import com.rikonardo.cafebabe.data.constantpool.ConstantClass
 import com.rikonardo.cafebabe.data.constantpool.ConstantUtf8
 
 class Interface(private val classFile: ClassFile, val data: InterfaceData) {
+    constructor(classFile: ClassFile, name: String) : this(
+        classFile,
+        InterfaceData(classFile.constantPool.add(ConstantClass(classFile.constantPool.add(ConstantUtf8(name)))))
+    )
+
     var name: String
         get() {
             val classConst = classFile.data.constantPool[data.index] as ConstantClass

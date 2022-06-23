@@ -7,10 +7,10 @@ import com.rikonardo.cafebabe.utils.ObservableList
 import com.rikonardo.cafebabe.utils.Reader
 import com.rikonardo.cafebabe.utils.Writer
 
-class ClassFile(binary: ByteArray) {
+class ClassFile {
     val data: ClassFileData
 
-    init {
+    constructor(binary: ByteArray) {
         val reader = Reader(binary)
         val magic = reader.readU4()
         val minorVersion = reader.readU2()
@@ -40,6 +40,33 @@ class ClassFile(binary: ByteArray) {
             fields,
             methods,
             attributes
+        )
+    }
+
+    constructor(
+        name: String,
+        parent: String = "java/lang/Object",
+        majorVersion: Int = 45,
+        minorVersion: Int = 0,
+        interfaces: List<String> = listOf(),
+        accessFlags: List<AccessFlag> = listOf()
+    ) {
+        val pool = ConstantPool()
+        val thisClass = pool.add(ConstantClass(pool.add(ConstantUtf8(name))))
+        val superClass = pool.add(ConstantClass(pool.add(ConstantUtf8(parent))))
+        val interfaceData = interfaces.map { InterfaceData(pool.add(ConstantClass(pool.add(ConstantUtf8(it))))) }
+        data = ClassFileData(
+            0xCAFEBABE.toInt(),
+            minorVersion,
+            majorVersion,
+            pool,
+            AccessFlag.to(accessFlags),
+            thisClass,
+            superClass,
+            interfaceData,
+            mutableListOf(),
+            mutableListOf(),
+            mutableListOf()
         )
     }
 

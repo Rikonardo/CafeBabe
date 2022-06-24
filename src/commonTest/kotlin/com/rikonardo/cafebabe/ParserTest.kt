@@ -62,6 +62,7 @@ class ParserTest {
         classInfo.methods.add(Method(classInfo, "sayHello", "()V"))
         val newBinary = classInfo.compile()
         val newClassInfo = ClassFile(newBinary)
+        assertTrue(newClassInfo.access.contains(AccessFlag.PUBLIC))
         assertEquals(newClassInfo.name, "HelloWorld")
         assertEquals(newClassInfo.interfaces.first().name, "java/lang/Runnable")
         assertEquals(newClassInfo.methods.first().name, "sayHello")

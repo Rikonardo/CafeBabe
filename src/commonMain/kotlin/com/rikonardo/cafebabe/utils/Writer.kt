@@ -4,7 +4,7 @@ class Writer {
     var data = ByteArray(1024)
     var filled = 0
     fun writeU1Array(byteArray: ByteArray) {
-        if (data.size - filled < byteArray.size) {
+        while (data.size - filled < byteArray.size) {
             val newData = ByteArray(data.size * 2)
             data.copyInto(newData)
             data = newData

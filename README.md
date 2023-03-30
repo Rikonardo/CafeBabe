@@ -27,7 +27,7 @@ repositories {
 }
 
 dependencies {
-    implementation("com.rikonardo.cafebabe:CafeBabe:1.0.2")
+    implementation("com.rikonardo.cafebabe:CafeBabe:1.0.3")
 }
 ```
 
